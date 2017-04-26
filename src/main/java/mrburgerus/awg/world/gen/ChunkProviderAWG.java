@@ -68,7 +68,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         terraingen.replaceBiomeBlocks(x, z, chunkprimer, this.biomesForGeneration);
 
         // Generate caves
-        //this.caveGenerator.generate(this.worldObj, x, z, chunkprimer);
+        this.caveGenerator.generate(this.worldObj, x, z, chunkprimer);
 
         Chunk chunk = new Chunk(this.worldObj, chunkprimer, x, z);
 
@@ -90,7 +90,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         Biome biome = this.worldObj.getBiome(blockpos.add(16, 0, 16));
 
         // vanilla decorator, DISABLED
-        //biome.decorate(this.worldObj, this.random, blockpos);
+        biome.decorate(this.worldObj, this.random, blockpos);
 
 
         WorldEntitySpawner.performWorldGenSpawning(this.worldObj, biome, i + 8, j + 8, 16, 16, this.random);

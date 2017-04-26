@@ -1,7 +1,7 @@
 package mrburgerus.awg.world;
 
-import mrburgerus.awg.AWG;
 import mrburgerus.awg.world.gen.ChunkProviderAWG;
+import net.minecraft.init.Biomes;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeProvider;
@@ -34,7 +34,10 @@ public class WorldTypeAWG extends WorldType
     @Override @Nonnull
     public BiomeProvider getBiomeProvider(@Nonnull World world)
     {
-        return new BiomeProviderSingle(AWG.alphaBiome);
+        // DEFAULT
+        //return new BiomeProviderSingle(AWG.alphaBiome);
+        //New
+        return new BiomeProviderSingle(Biomes.PLAINS);
     }
 
 

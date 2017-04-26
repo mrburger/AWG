@@ -4,14 +4,10 @@ import mrburgerus.awg.proxy.ClientProxy;
 import mrburgerus.awg.proxy.CommonProxy;
 import mrburgerus.awg.world.WorldTypeAWG;
 import mrburgerus.awg.world.biome.biomes.BiomeAlpha;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -20,7 +16,7 @@ import java.util.logging.Logger;
  * Created by mrburgerUS on 4/23/2017.
  */
 
-@Mod(modid = AWG.MOD_ID, name = AWG.NAME, version = AWG.VERSION)
+@Mod(modid = AWG.MOD_ID, name = AWG.NAME, version = AWG.VERSION, acceptableRemoteVersions = "*")
 public class AWG
 {
     //MOD INFO
@@ -51,11 +47,11 @@ public class AWG
 
         worldtype = new WorldTypeAWG(WORLD_TYPE);
 
-        alphaBiome = new BiomeAlpha(new Biome.BiomeProperties("Alpha Biome"));
-        GameRegistry.register(alphaBiome);
-        BiomeManager.addSpawnBiome(alphaBiome);
-        BiomeManager.addStrongholdBiome(alphaBiome);
-        BiomeManager.addVillageBiome(alphaBiome, true);
+        //alphaBiome = new BiomeAlpha(new Biome.BiomeProperties("Alpha Biome"));
+        //GameRegistry.register(alphaBiome);
+        //BiomeManager.addSpawnBiome(alphaBiome);
+        //BiomeManager.addStrongholdBiome(alphaBiome);
+        //BiomeManager.addVillageBiome(alphaBiome, true);
 
         configPath = event.getModConfigurationDirectory() + File.separator + AWG.FILE_LOC + File.separator;
 
@@ -65,7 +61,7 @@ public class AWG
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        BiomeDictionary.addTypes(alphaBiome);
+        //BiomeDictionary.addTypes(alphaBiome);
     }
 
 }
