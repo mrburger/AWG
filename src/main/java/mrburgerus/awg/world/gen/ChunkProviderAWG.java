@@ -1,5 +1,8 @@
 package mrburgerus.awg.world.gen;
 
+import mrburgerus.awg.world.deco.GenCactusAWG;
+import mrburgerus.awg.world.deco.GenTreeAWG;
+import mrburgerus.awg.world.gen.noisegenerator.NoiseGeneratorOctaves3DAWG;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -13,6 +16,7 @@ import net.minecraft.world.gen.ChunkProviderSettings;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.MapGenCaves;
 import net.minecraft.world.gen.MapGenRavine;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.*;
 
 import javax.annotation.Nullable;
@@ -25,6 +29,8 @@ public class ChunkProviderAWG implements IChunkGenerator
     private final Random random;
     private Biome[] biomesForGeneration;
     private final boolean mapFeaturesEnabled;
+
+    public NoiseGeneratorOctaves3DAWG treeNoise;
 
     private MapGenStronghold strongholdGenerator = new MapGenStronghold();
     private MapGenVillage villageGenerator = new MapGenVillage();
@@ -46,6 +52,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         terraingen.setup(worldObj, random);
         world.setSeaLevel(64);
         this.mapFeaturesEnabled = mapFeaturesEnabledIn;
+        treeNoise = new NoiseGeneratorOctaves3DAWG(random, 8);
     }
 
     @Override
@@ -61,7 +68,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         terraingen.replaceBiomeBlocks(x, z, chunkprimer, this.biomesForGeneration);
 
         // Generate caves
-        this.caveGenerator.generate(this.worldObj, x, z, chunkprimer);
+        //this.caveGenerator.generate(this.worldObj, x, z, chunkprimer);
 
         Chunk chunk = new Chunk(this.worldObj, chunkprimer, x, z);
 
@@ -82,7 +89,9 @@ public class ChunkProviderAWG implements IChunkGenerator
         ChunkPos chunkpos = new ChunkPos(x, z);
         Biome biome = this.worldObj.getBiome(blockpos.add(16, 0, 16));
 
-        biome.decorate(this.worldObj, this.random, blockpos);
+        // vanilla decorator, DISABLED
+        //biome.decorate(this.worldObj, this.random, blockpos);
+
 
         WorldEntitySpawner.performWorldGenSpawning(this.worldObj, biome, i + 8, j + 8, 16, 16, this.random);
 
@@ -94,6 +103,27 @@ public class ChunkProviderAWG implements IChunkGenerator
                 this.strongholdGenerator.generateStructure(this.worldObj, this.random, chunkpos);
                 this.scatteredFeatureGenerator.generateStructure(this.worldObj, this.random, chunkpos);
                 this.oceanMonumentGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+        }
+
+        //ALPHA FEATURES (Thanks ted80)
+        for(int i10 = 0; i10 < 1; i10++)
+        {
+            int l14 = i + random.nextInt(16) + 8;
+            int j17 = random.nextInt(128);
+            int l18 = j + random.nextInt(16) + 8;
+            (new GenCactusAWG()).generate(worldObj, random, new BlockPos(l14, j17, l18));
+        }
+
+
+        //GENERATE TREES
+        double d = 0.5D;
+        int l3 = (int)((treeNoise.generateNoise((double)i * d, (double)j * d) / 8D + random.nextDouble() * 4D + 4D) / 3D);
+        for(int k8 = 0; k8 < l3; k8++)
+        {
+            int j13 = i + random.nextInt(16) + 8;
+            int l15 = j + random.nextInt(16) + 8;
+            WorldGenerator worldgenerator = new GenTreeAWG(true);
+            worldgenerator.generate(worldObj, random, new BlockPos(j13, worldObj.getHeight(j13, l15), l15));
         }
     }
 

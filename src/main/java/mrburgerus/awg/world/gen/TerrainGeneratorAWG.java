@@ -137,118 +137,24 @@ public class TerrainGeneratorAWG
     }
 
     // makes a noise field
-    /*
-    private double[] initNoiseField(double array[], int xPos, int yPos, int zPos, int xSize, int ySize, int zSize) {
-
-        // init array
+    private double[] initNoiseField(double array[], int xPos, int yPos, int zPos, int xSize, int ySize, int zSize)
+    {
         if(array == null)
         {
             array = new double[xSize * ySize * zSize];
         }
-        // values I copied
-        double d0 = 684.41200000000003D;
-        double d1 = 684.41200000000003D;
-
-        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, yPos, zPos,xSize, 1, zSize, 1.0D, 0.0D, 1.0D);
-        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, yPos, zPos,xSize, 1, zSize,  100D, 0.0D, 100D);
-        noise3 = noiseGen3.generateNoiseArray(noise3, xPos, yPos, zPos, xSize, ySize, zSize,
-                d0 / 80D, d1 / 160D, d0 / 80D);
-        noise1 = noiseGen1.generateNoiseArray(noise1, xPos, yPos, zPos, xSize, ySize, zSize,
-                d0, d1, d0);
-        noise2 = noiseGen2.generateNoiseArray(noise2, xPos, yPos, zPos, xSize, ySize, zSize,
-                d0, d1, d0);
-        int k1 = 0;
-        int l1 = 0;
-        int i2 = 16 / xSize;
-        for(int x = 0; x < xSize; x++) {
-            int k2 = x * i2 + i2 / 2;
-            for(int z = 0; z < zSize; z++) {
-                int i3 = z * i2 + i2 / 2;
-                double d2 = temp;
-                double d3 = rain * d2;
-                double d4 = 1.0D - d3;
-                d4 *= d4;
-                d4 *= d4;
-                d4 = 1.0D - d4;
-                double d5 = (noise6[l1] + 256D) / 512D;
-                d5 *= d4;
-                if(d5 > 1.0D) {
-                    d5 = 1.0D;
-                }
-                double d6 = noise7[l1] / 8000D;
-                if(d6 < 0.0D) {
-                    d6 = -d6 * 0.3D;
-                }
-                d6 = d6 * 3D - 2D;
-                if(d6 < 0.0D) {
-                    d6 /= 2D;
-                    if(d6 < -1D) {
-                        d6 = -1D;
-                    }
-                    d6 /= 1.4D;
-                    d6 /= 2D;
-                    d5 = 0.0D;
-                } else {
-                    if(d6 > 1.0D) {
-                        d6 = 1.0D;
-                    }
-                    d6 /= 8D;
-                }
-                if(d5 < 0.0D) {
-                    d5 = 0.0D;
-                }
-                d5 += 0.5D;
-                d6 = (d6 * (double)ySize) / 16D;
-                double d7 = (double)ySize / 2D + d6 * 4D;
-                l1++;
-                for(int y = 0; y < ySize; y++) {
-                    double d8 = 0.0D;
-                    double d9 = (((double)y - d7) * 12D)
-                            / d5;
-                    if(d9 < 0.0D) {
-                        d9 *= 4D;
-                    }
-                    double d10 = noise1[k1] / 512D;
-                    double d11 = noise2[k1] / 512D;
-                    double d12 = (this.noise3[k1] / 10D + 1.0D) / 2D;
-                    if(d12 < 0.0D) {
-                        d8 = d10;
-                    } else if(d12 > 1.0D) {
-                        d8 = d11;
-                    } else {
-                        d8 = d10 + (d11 - d10) * d12;
-                    }
-                    d8 -= d9;
-                    if(y > ySize - 4) {
-                        double d13 = (double)((float)(y - (ySize - 4)) / 3F);
-                        d8 = d8 * (1.0D - d13) + -10D * d13;
-                    }
-                    array[k1] = d8;
-                    k1++;
-                }
-            }
-        }
-        return array;
-    }
-    */
-    private double[] initNoiseField(double ad[], int i, int j, int k, int l, int i1, int j1)
-    {
-        if(ad == null)
-        {
-            ad = new double[l * i1 * j1];
-        }
         double d = 684.41200000000003D;
         double d1 = 684.41200000000003D;
-        noise6 = noiseGen6.generateNoiseArray(noise6, i, j, k, l, 1, j1, 1.0D, 0.0D, 1.0D);
-        noise7 = noiseGen7.generateNoiseArray(noise7, i, j, k, l, 1, j1, 100D, 0.0D, 100D);
-        noise3 = noiseGen3.generateNoiseArray(noise3, i, j, k, l, i1, j1, d / 80D, d1 / 160D, d / 80D);
-        noise1 = noiseGen1.generateNoiseArray(noise1, i, j, k, l, i1, j1, d, d1, d);
-        noise2 = noiseGen2.generateNoiseArray(noise2, i, j, k, l, i1, j1, d, d1, d);
+        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, yPos, zPos, xSize, 1, zSize, 1.0D, 0.0D, 1.0D);
+        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, yPos, zPos, xSize, 1, zSize, 100D, 0.0D, 100D);
+        noise3 = noiseGen3.generateNoiseArray(noise3, xPos, yPos, zPos, xSize, ySize, zSize, d / 80D, d1 / 160D, d / 80D);
+        noise1 = noiseGen1.generateNoiseArray(noise1, xPos, yPos, zPos, xSize, ySize, zSize, d, d1, d);
+        noise2 = noiseGen2.generateNoiseArray(noise2, xPos, yPos, zPos, xSize, ySize, zSize, d, d1, d);
         int k1 = 0;
         int l1 = 0;
-        for(int i2 = 0; i2 < l; i2++)
+        for(int i2 = 0; i2 < xSize; i2++)
         {
-            for(int j2 = 0; j2 < j1; j2++)
+            for(int j2 = 0; j2 < zSize; j2++)
             {
                 double d2 = (noise6[l1] + 256D) / 512D;
                 if(d2 > 1.0D)
@@ -281,10 +187,10 @@ public class TerrainGeneratorAWG
                     d4 /= 6D;
                 }
                 d2 += 0.5D;
-                d4 = (d4 * (double)i1) / 16D;
-                double d5 = (double)i1 / 2D + d4 * 4D;
+                d4 = (d4 * (double)ySize) / 16D;
+                double d5 = (double)ySize / 2D + d4 * 4D;
                 l1++;
-                for(int k2 = 0; k2 < i1; k2++)
+                for(int k2 = 0; k2 < ySize; k2++)
                 {
                     double d6 = 0.0D;
                     double d7 = (((double)k2 - d5) * 12D) / d2;
@@ -307,9 +213,9 @@ public class TerrainGeneratorAWG
                         d6 = d8 + (d9 - d8) * d10;
                     }
                     d6 -= d7;
-                    if(k2 > i1 - 4)
+                    if(k2 > ySize - 4)
                     {
-                        double d11 = (float)(k2 - (i1 - 4)) / 3F;
+                        double d11 = (float)(k2 - (ySize - 4)) / 3F;
                         d6 = d6 * (1.0D - d11) + -10D * d11;
                     }
                     if((double)k2 < d3)
@@ -325,7 +231,7 @@ public class TerrainGeneratorAWG
                         }
                         d6 = d6 * (1.0D - d12) + -10D * d12;
                     }
-                    ad[k1] = d6;
+                    array[k1] = d6;
                     k1++;
                 }
 
@@ -333,7 +239,7 @@ public class TerrainGeneratorAWG
 
         }
 
-        return ad;
+        return array;
     }
 
     // Replace Biome Blocks, wow!
