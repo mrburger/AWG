@@ -137,6 +137,7 @@ public class TerrainGeneratorAWG
     }
 
     // makes a noise field
+    /*
     private double[] initNoiseField(double array[], int xPos, int yPos, int zPos, int xSize, int ySize, int zSize) {
 
         // init array
@@ -145,11 +146,11 @@ public class TerrainGeneratorAWG
             array = new double[xSize * ySize * zSize];
         }
         // values I copied
-        double d0 = 684.412D;
-        double d1 = 684.412D;
+        double d0 = 684.41200000000003D;
+        double d1 = 684.41200000000003D;
 
-        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, yPos, zPos,xSize, ySize, zSize, 1.0D, 0.0D, 1.0D);
-        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, yPos, zPos,xSize, ySize, zSize,  100D, 0.0D, 100D);
+        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, yPos, zPos,xSize, 1, zSize, 1.0D, 0.0D, 1.0D);
+        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, yPos, zPos,xSize, 1, zSize,  100D, 0.0D, 100D);
         noise3 = noiseGen3.generateNoiseArray(noise3, xPos, yPos, zPos, xSize, ySize, zSize,
                 d0 / 80D, d1 / 160D, d0 / 80D);
         noise1 = noiseGen1.generateNoiseArray(noise1, xPos, yPos, zPos, xSize, ySize, zSize,
@@ -228,6 +229,111 @@ public class TerrainGeneratorAWG
             }
         }
         return array;
+    }
+    */
+    private double[] initNoiseField(double ad[], int i, int j, int k, int l, int i1, int j1)
+    {
+        if(ad == null)
+        {
+            ad = new double[l * i1 * j1];
+        }
+        double d = 684.41200000000003D;
+        double d1 = 684.41200000000003D;
+        noise6 = noiseGen6.generateNoiseArray(noise6, i, j, k, l, 1, j1, 1.0D, 0.0D, 1.0D);
+        noise7 = noiseGen7.generateNoiseArray(noise7, i, j, k, l, 1, j1, 100D, 0.0D, 100D);
+        noise3 = noiseGen3.generateNoiseArray(noise3, i, j, k, l, i1, j1, d / 80D, d1 / 160D, d / 80D);
+        noise1 = noiseGen1.generateNoiseArray(noise1, i, j, k, l, i1, j1, d, d1, d);
+        noise2 = noiseGen2.generateNoiseArray(noise2, i, j, k, l, i1, j1, d, d1, d);
+        int k1 = 0;
+        int l1 = 0;
+        for(int i2 = 0; i2 < l; i2++)
+        {
+            for(int j2 = 0; j2 < j1; j2++)
+            {
+                double d2 = (noise6[l1] + 256D) / 512D;
+                if(d2 > 1.0D)
+                {
+                    d2 = 1.0D;
+                }
+                double d3 = 0.0D;
+                double d4 = noise7[l1] / 8000D;
+                if(d4 < 0.0D)
+                {
+                    d4 = -d4;
+                }
+                d4 = d4 * 3D - 3D;
+                if(d4 < 0.0D)
+                {
+                    d4 /= 2D;
+                    if(d4 < -1D)
+                    {
+                        d4 = -1D;
+                    }
+                    d4 /= 1.3999999999999999D;
+                    d4 /= 2D;
+                    d2 = 0.0D;
+                } else
+                {
+                    if(d4 > 1.0D)
+                    {
+                        d4 = 1.0D;
+                    }
+                    d4 /= 6D;
+                }
+                d2 += 0.5D;
+                d4 = (d4 * (double)i1) / 16D;
+                double d5 = (double)i1 / 2D + d4 * 4D;
+                l1++;
+                for(int k2 = 0; k2 < i1; k2++)
+                {
+                    double d6 = 0.0D;
+                    double d7 = (((double)k2 - d5) * 12D) / d2;
+                    if(d7 < 0.0D)
+                    {
+                        d7 *= 4D;
+                    }
+                    double d8 = noise1[k1] / 512D;
+                    double d9 = noise2[k1] / 512D;
+                    double d10 = (noise3[k1] / 10D + 1.0D) / 2D;
+                    if(d10 < 0.0D)
+                    {
+                        d6 = d8;
+                    } else
+                    if(d10 > 1.0D)
+                    {
+                        d6 = d9;
+                    } else
+                    {
+                        d6 = d8 + (d9 - d8) * d10;
+                    }
+                    d6 -= d7;
+                    if(k2 > i1 - 4)
+                    {
+                        double d11 = (float)(k2 - (i1 - 4)) / 3F;
+                        d6 = d6 * (1.0D - d11) + -10D * d11;
+                    }
+                    if((double)k2 < d3)
+                    {
+                        double d12 = (d3 - (double)k2) / 4D;
+                        if(d12 < 0.0D)
+                        {
+                            d12 = 0.0D;
+                        }
+                        if(d12 > 1.0D)
+                        {
+                            d12 = 1.0D;
+                        }
+                        d6 = d6 * (1.0D - d12) + -10D * d12;
+                    }
+                    ad[k1] = d6;
+                    k1++;
+                }
+
+            }
+
+        }
+
+        return ad;
     }
 
     // Replace Biome Blocks, wow!
