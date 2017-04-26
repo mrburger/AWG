@@ -36,7 +36,7 @@ public class ChunkProviderAWG implements IChunkGenerator
     private ChunkProviderSettings settings;
 
     private MapGenBase caveGenerator = new MapGenCaves();
-    private NewTerrainGeneratorAWG terraingen = new NewTerrainGeneratorAWG();
+    private TerrainGeneratorAWG terraingen = new TerrainGeneratorAWG();
 
     public ChunkProviderAWG(World world, boolean mapFeaturesEnabledIn)
     {

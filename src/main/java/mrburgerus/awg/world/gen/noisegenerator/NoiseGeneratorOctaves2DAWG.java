@@ -1,4 +1,4 @@
-package mrburgerus.awg.world.gen.newnoise;
+package mrburgerus.awg.world.gen.noisegenerator;
 
 import java.util.Random;
 

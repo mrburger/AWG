@@ -1,10 +1,10 @@
-package mrburgerus.awg.world.gen.newnoise;
+package mrburgerus.awg.world.gen.noisegenerator;
 
 import java.util.Random;
 
-/**
- * Created by mrburgerUS on 4/25/2017.
- */
+// THIS CLASS IS LIKE "GENERATORNOISEOLD"
+//FROM "BetaWorldGen, ted80"
+
 public class NoiseGenerator2DAWG
 {
     //BEGIN PREWRITTEN CODE FOR TESTING
