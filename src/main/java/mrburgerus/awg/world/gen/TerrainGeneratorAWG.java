@@ -148,8 +148,8 @@ public class TerrainGeneratorAWG
         double d0 = 684.412D;
         double d1 = 684.412D;
 
-        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, zPos, xSize, zSize, 1.121D, 1.121D, 0.5D);
-        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, zPos, xSize, zSize, 200D, 200D, 0.5D);
+        noise6 = noiseGen6.generateNoiseArray(noise6, xPos, yPos, zPos,xSize, ySize, zSize, 1.0D, 0.0D, 1.0D);
+        noise7 = noiseGen7.generateNoiseArray(noise7, xPos, yPos, zPos,xSize, ySize, zSize,  100D, 0.0D, 100D);
         noise3 = noiseGen3.generateNoiseArray(noise3, xPos, yPos, zPos, xSize, ySize, zSize,
                 d0 / 80D, d1 / 160D, d0 / 80D);
         noise1 = noiseGen1.generateNoiseArray(noise1, xPos, yPos, zPos, xSize, ySize, zSize,
