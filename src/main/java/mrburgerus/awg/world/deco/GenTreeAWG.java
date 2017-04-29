@@ -95,6 +95,8 @@ public class GenTreeAWG extends WorldGenAbstractTree {
             Block k2 = world.getBlockState(new BlockPos(i, j + l1, k)).getBlock();
             if(k2 == Blocks.AIR || k2 == Blocks.LEAVES || k2 == Blocks.LEAVES2)
             {
+                //THIS GENERATES ONLY BIRCH
+                //world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH));
                 world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState());
             }
         }

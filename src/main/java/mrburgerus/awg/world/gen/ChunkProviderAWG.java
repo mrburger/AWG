@@ -4,6 +4,7 @@ import mrburgerus.awg.world.deco.GenCactusAWG;
 import mrburgerus.awg.world.deco.GenFlowersAWG;
 import mrburgerus.awg.world.deco.GenGrassAWG;
 import mrburgerus.awg.world.deco.GenTreeAWG;
+import mrburgerus.awg.world.gen.map.NewMapGenCavesAWG;
 import mrburgerus.awg.world.gen.noisegenerator.NoiseGeneratorOctaves3DAWG;
 import net.minecraft.block.BlockStone;
 import net.minecraft.entity.EnumCreatureType;
@@ -18,12 +19,11 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.MapGenCaves;
 import net.minecraft.world.gen.MapGenRavine;
-import net.minecraft.world.gen.feature.WorldGenMinable;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.structure.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
@@ -34,6 +34,7 @@ public class ChunkProviderAWG implements IChunkGenerator
     private final Random random;
     private Biome[] biomesForGeneration;
     private final boolean mapFeaturesEnabled;
+    private ChunkPos chunkpos;
 
     public NoiseGeneratorOctaves3DAWG treeNoise;
 
@@ -56,10 +57,19 @@ public class ChunkProviderAWG implements IChunkGenerator
     public WorldGenerator redstoneGen;
     public WorldGenerator diamondGen;
     public WorldGenerator lapisGen;
+    public WorldGenerator reedGen;
+    public WorldGenerator clayGen;
 
-    public BlockPos chunkPos;
+    //Edit these
+    int reedChance = 2;
+    int grassChance = 1;
+    int dungeonChance = 8;
+    int clayCount = 1;
+    int maxHeightRock = 60;
 
-    private MapGenBase caveGenerator = new MapGenCaves();
+    public BlockPos cPos1;
+
+    private NewMapGenCavesAWG caveGenerator = new NewMapGenCavesAWG();
     private TerrainGeneratorAWG terraingen = new TerrainGeneratorAWG();
 
     public ChunkProviderAWG(World world, boolean mapFeaturesEnabledIn)
@@ -73,7 +83,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         treeNoise = new NoiseGeneratorOctaves3DAWG(random, 8);
     }
 
-    @Override
+    @Override @Nonnull
     public Chunk provideChunk(int x, int z) {
         ChunkPrimer chunkprimer = new ChunkPrimer();
 
@@ -86,7 +96,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         terraingen.replaceBiomeBlocks(x, z, chunkprimer, this.biomesForGeneration);
 
         // Generate caves
-        this.caveGenerator.generate(this.worldObj, x, z, chunkprimer);
+        this.caveGenerator.generate(worldObj, x, z, chunkprimer);
 
         Chunk chunk = new Chunk(this.worldObj, chunkprimer, x, z);
 
@@ -100,11 +110,12 @@ public class ChunkProviderAWG implements IChunkGenerator
     }
 
     @Override
-    public void populate(int x, int z) {
+    public void populate(int x, int z)
+    {
         int i = x * 16;
         int j = z * 16;
         BlockPos blockpos = new BlockPos(i, 0, j);
-        ChunkPos chunkpos = new ChunkPos(x, z);
+        this.chunkpos = new ChunkPos(x, z);
         Biome biome = this.worldObj.getBiome(blockpos.add(16, 0, 16));
 
         // vanilla decorator, DISABLED
@@ -116,14 +127,29 @@ public class ChunkProviderAWG implements IChunkGenerator
         //STRUCTURES
         if (this.mapFeaturesEnabled)
         {
-                this.mineshaftGenerator.generateStructure(this.worldObj, this.random, chunkpos);
-                this.villageGenerator.generateStructure(this.worldObj, this.random, chunkpos);
-                this.strongholdGenerator.generateStructure(this.worldObj, this.random, chunkpos);
-                this.scatteredFeatureGenerator.generateStructure(this.worldObj, this.random, chunkpos);
-                this.oceanMonumentGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+            this.mineshaftGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+
+            //DISABLE VILLAGES FOR NOW
+            //this.villageGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+            this.strongholdGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+            this.scatteredFeatureGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+            this.oceanMonumentGenerator.generateStructure(this.worldObj, this.random, chunkpos);
+
+            //DUNGEONS
+            for(int i1 = 0; i1 < dungeonChance; i1++)
+            {
+                int i4 = i + random.nextInt(16) + 8;
+                int j6 = random.nextInt(128);
+                int i11 = j + random.nextInt(16) + 8;
+                (new WorldGenDungeons()).generate(worldObj, random, new BlockPos(i4, j6, i11));
+            }
+
         }
 
+
+
         //ALPHA FEATURES (Thanks ted80)
+        //GENERATE CACTUS
         for(int i10 = 0; i10 < 1; i10++)
         {
             int l14 = i + random.nextInt(16) + 8;
@@ -145,8 +171,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         }
 
         //GENERATE TALL GRASS
-        int chancesGrass = 1;
-        for(int l14 = 0; l14 < chancesGrass; l14++) //GOOD
+        for(int l14 = 0; l14 < grassChance; l14++)
         {
             int l19 = i + random.nextInt(16) + 8;
             int k22 = random.nextInt(128);
@@ -155,7 +180,7 @@ public class ChunkProviderAWG implements IChunkGenerator
         }
 
         //GENERATE FLOWERS
-        if(random.nextInt(2) == 0) //GOOD
+        if(random.nextInt(2) == 0)
         {
             int j15 = i + random.nextInt(16) + 8;
             int j17 = random.nextInt(128);
@@ -163,11 +188,48 @@ public class ChunkProviderAWG implements IChunkGenerator
             (new GenFlowersAWG(Blocks.RED_FLOWER)).generate(worldObj, random, new BlockPos(j15, j17, j20));
         }
 
-        //GENERATE WORLD MATERIALS
+        if(random.nextInt(2) == 0)
+        {
+            int j15 = i + random.nextInt(16) + 8;
+            int j17 = random.nextInt(128);
+            int j20 = j + random.nextInt(16) + 8;
+            (new GenFlowersAWG(Blocks.YELLOW_FLOWER)).generate(worldObj, random, new BlockPos(j15, j17, j20));
+        }
 
-        this.chunkPos = blockpos;
+        //GENERATE DEM SHROOMS
+        if(random.nextInt(2) == 0)
+        {
+            int j15 = i + random.nextInt(16) + 8;
+            int j17 = random.nextInt(128);
+            int j20 = j + random.nextInt(16) + 8;
+            (new GenFlowersAWG(Blocks.RED_MUSHROOM)).generate(worldObj, random, new BlockPos(j15, j17, j20));
+        }
+
+        if(random.nextInt(2) == 0)
+        {
+            int j15 = i + random.nextInt(16) + 8;
+            int j17 = random.nextInt(128);
+            int j20 = j + random.nextInt(16) + 8;
+            (new GenFlowersAWG(Blocks.BROWN_MUSHROOM)).generate(worldObj, random, new BlockPos(j15, j17, j20));
+        }
+
+        //GENERATE SUGARCANE
+        reedGen = new WorldGenReed();
+        for (int k4 = 0; k4 < reedChance; ++k4)
+        {
+            int i9 = random.nextInt(16) + 8;
+            int l12 = random.nextInt(16) + 8;
+            int i16 = worldObj.getHeight(blockpos.add(i9, 0, l12)).getY() * 2;
+
+            if (i16 > 0)
+            {
+                int l18 = random.nextInt(i16);
+                this.reedGen.generate(worldObj, random, blockpos.add(i9, l18, l12));
+            }
+        }
 
 
+        this.cPos1 = blockpos;
         //finally decorate
         decorate(worldObj, random, Biomes.PLAINS, blockpos);
     }
@@ -208,7 +270,7 @@ public class ChunkProviderAWG implements IChunkGenerator
     }
 
     // VANILLA METHODS
-    //TOTALLY COPIED THIS
+    //TOTALLY COPIED THIS LOLOLOL
 
     public void decorate(World worldIn, Random random, Biome biome, BlockPos pos)
     {
@@ -223,35 +285,37 @@ public class ChunkProviderAWG implements IChunkGenerator
             this.redstoneGen = new WorldGenMinable(Blocks.REDSTONE_ORE.getDefaultState(), 8);
             this.diamondGen = new WorldGenMinable(Blocks.DIAMOND_ORE.getDefaultState(), 8);
             this.lapisGen = new WorldGenMinable(Blocks.LAPIS_ORE.getDefaultState(), 7);
+            this.clayGen = new WorldGenClay(4);
+            this.generateClay(worldObj, chunkpos);
             this.generateOres(worldIn, random);
     }
 
     protected void generateOres(World worldIn, Random random)
     {
-        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Pre(worldIn, random, chunkPos));
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, dirtGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIRT))
+        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Pre(worldIn, random, cPos1));
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, dirtGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIRT))
             this.genStandardOre1(worldIn, random, 33, this.dirtGen, 0, 128);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, gravelGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GRAVEL))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, gravelGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GRAVEL))
             this.genStandardOre1(worldIn, random, 33, this.gravelGen, 0, 128);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, dioriteGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIORITE))
-            this.genStandardOre1(worldIn, random, 33, this.dioriteGen, 0, 80);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, graniteGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GRANITE))
-            this.genStandardOre1(worldIn, random, 33, this.graniteGen, 0, 80);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, andesiteGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.ANDESITE))
-            this.genStandardOre1(worldIn, random, 33, this.andesiteGen, 0,80);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, coalGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.COAL))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, dioriteGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIORITE))
+            this.genStandardOre1(worldIn, random, 33, this.dioriteGen, 0, maxHeightRock);
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, graniteGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GRANITE))
+            this.genStandardOre1(worldIn, random, 33, this.graniteGen, 0, maxHeightRock);
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, andesiteGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.ANDESITE))
+            this.genStandardOre1(worldIn, random, 33, this.andesiteGen, 0, maxHeightRock);
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, coalGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.COAL))
             this.genStandardOre1(worldIn, random, 17, this.coalGen, 0, 128);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, ironGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.IRON))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, ironGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.IRON))
             this.genStandardOre1(worldIn, random, 9, this.ironGen, 0, 64);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, goldGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GOLD))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, goldGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.GOLD))
             this.genStandardOre1(worldIn, random, 9, this.goldGen, 0, 32);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, redstoneGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.REDSTONE))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, redstoneGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.REDSTONE))
             this.genStandardOre1(worldIn, random, 8, this.redstoneGen, 0, 16);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, diamondGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIAMOND))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, diamondGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIAMOND))
             this.genStandardOre1(worldIn, random, 8, this.diamondGen, 0, 16);
-        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, lapisGen, chunkPos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.LAPIS))
+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, lapisGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.LAPIS))
             this.genStandardOre2(worldIn, random, 7, this.lapisGen, 16, 16);
-        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(worldIn, random, chunkPos));
+        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(worldIn, random, cPos1));
     }
 
     protected void genStandardOre1(World worldIn, Random random, int blockCount, WorldGenerator generator, int minHeight, int maxHeight)
@@ -276,7 +340,7 @@ public class ChunkProviderAWG implements IChunkGenerator
 
         for (int j = 0; j < blockCount; ++j)
         {
-            BlockPos blockpos = this.chunkPos.add(random.nextInt(16), random.nextInt(maxHeight - minHeight) + minHeight, random.nextInt(16));
+            BlockPos blockpos = this.cPos1.add(random.nextInt(16), random.nextInt(maxHeight - minHeight) + minHeight, random.nextInt(16));
             generator.generate(worldIn, random, blockpos);
         }
     }
@@ -286,8 +350,18 @@ public class ChunkProviderAWG implements IChunkGenerator
     {
         for (int i = 0; i < blockCount; ++i)
         {
-            BlockPos blockpos = this.chunkPos.add(random.nextInt(16), random.nextInt(spread) + random.nextInt(spread) + centerHeight - spread, random.nextInt(16));
+            BlockPos blockpos = this.cPos1.add(random.nextInt(16), random.nextInt(spread) + random.nextInt(spread) + centerHeight - spread, random.nextInt(16));
             generator.generate(worldIn, random, blockpos);
+        }
+    }
+
+    private void generateClay(World worldIn, ChunkPos chunkPos)
+    {
+        for (int i1 = 0; i1 < this.clayCount; ++i1)
+        {
+            int l1 = random.nextInt(16) + 8;
+            int i6 = random.nextInt(16) + 8;
+            this.clayGen.generate(worldIn, random, worldIn.getTopSolidOrLiquidBlock(chunkPos.getBlock(l1, 0, i6)));
         }
     }
 }

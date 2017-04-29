@@ -36,7 +36,7 @@ public class WorldTypeAWG extends WorldType
     {
         // DEFAULT
         //return new BiomeProviderSingle(AWG.alphaBiome);
-        //New
+        //NEW
         return new BiomeProviderSingle(Biomes.PLAINS);
     }
 
