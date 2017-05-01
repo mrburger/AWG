@@ -4,7 +4,7 @@ import mrburgerus.awg.world.deco.GenCactusAWG;
 import mrburgerus.awg.world.deco.GenFlowersAWG;
 import mrburgerus.awg.world.deco.GenGrassAWG;
 import mrburgerus.awg.world.deco.GenTreeAWG;
-import mrburgerus.awg.world.gen.map.NewMapGenCavesAWG;
+import mrburgerus.awg.world.gen.map.MapGenCavesAWG;
 import mrburgerus.awg.world.gen.noisegenerator.NoiseGeneratorOctaves3DAWG;
 import net.minecraft.block.BlockStone;
 import net.minecraft.entity.EnumCreatureType;
@@ -59,6 +59,7 @@ public class ChunkProviderAWG implements IChunkGenerator
     public WorldGenerator lapisGen;
     public WorldGenerator reedGen;
     public WorldGenerator clayGen;
+    public WorldGenerator emeraldGen;
 
     //Edit these
     int reedChance = 2;
@@ -69,7 +70,11 @@ public class ChunkProviderAWG implements IChunkGenerator
 
     public BlockPos cPos1;
 
-    private NewMapGenCavesAWG caveGenerator = new NewMapGenCavesAWG();
+
+    //CAVE GENERATOR WIP
+    private MapGenCavesAWG caveGenerator = new MapGenCavesAWG();
+    //DEFAULT CAVES
+    //private MapGenCaves caveGenerator = new MapGenCaves();
     private TerrainGeneratorAWG terraingen = new TerrainGeneratorAWG();
 
     public ChunkProviderAWG(World world, boolean mapFeaturesEnabledIn)
@@ -81,6 +86,8 @@ public class ChunkProviderAWG implements IChunkGenerator
         world.setSeaLevel(64);
         this.mapFeaturesEnabled = mapFeaturesEnabledIn;
         treeNoise = new NoiseGeneratorOctaves3DAWG(random, 8);
+
+        world.setSpawnPoint(new BlockPos(0, 64, 0));
     }
 
     @Override @Nonnull
@@ -285,6 +292,7 @@ public class ChunkProviderAWG implements IChunkGenerator
             this.redstoneGen = new WorldGenMinable(Blocks.REDSTONE_ORE.getDefaultState(), 8);
             this.diamondGen = new WorldGenMinable(Blocks.DIAMOND_ORE.getDefaultState(), 8);
             this.lapisGen = new WorldGenMinable(Blocks.LAPIS_ORE.getDefaultState(), 7);
+            this.emeraldGen = new WorldGenMinable(Blocks.EMERALD_ORE.getDefaultState(), 4);
             this.clayGen = new WorldGenClay(4);
             this.generateClay(worldObj, chunkpos);
             this.generateOres(worldIn, random);
@@ -312,10 +320,14 @@ public class ChunkProviderAWG implements IChunkGenerator
         if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, redstoneGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.REDSTONE))
             this.genStandardOre1(worldIn, random, 8, this.redstoneGen, 0, 16);
         if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, diamondGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.DIAMOND))
+        {
             this.genStandardOre1(worldIn, random, 8, this.diamondGen, 0, 16);
+            this.genStandardOre1(worldIn, random, 4, this.emeraldGen, 0, 16);
+        }
         if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, random, lapisGen, cPos1, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.LAPIS))
             this.genStandardOre2(worldIn, random, 7, this.lapisGen, 16, 16);
-        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(worldIn, random, cPos1));
+
+            net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(worldIn, random, cPos1));
     }
 
     protected void genStandardOre1(World worldIn, Random random, int blockCount, WorldGenerator generator, int minHeight, int maxHeight)
@@ -364,5 +376,6 @@ public class ChunkProviderAWG implements IChunkGenerator
             this.clayGen.generate(worldIn, random, worldIn.getTopSolidOrLiquidBlock(chunkPos.getBlock(l1, 0, i6)));
         }
     }
-}
+ }
+
 
