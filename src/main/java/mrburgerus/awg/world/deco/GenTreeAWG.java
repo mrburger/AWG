@@ -1,6 +1,6 @@
 package mrburgerus.awg.world.deco;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -70,6 +70,18 @@ public class GenTreeAWG extends WorldGenAbstractTree {
             return false;
         }
         world.setBlockState(new BlockPos(i, j - 1, k), Blocks.DIRT.getDefaultState());
+
+
+        if (random.nextInt(10) == 0)
+            generateBirch(world, i, j, k, l, random);
+        else
+            generateOak(world, i, j, k, l, random);
+
+        return true;
+    }
+
+    private void generateOak(World world, int i, int j, int k, int l, Random random)
+    {
         for(int k1 = (j - 3) + l; k1 <= j + l; k1++)
         {
             int j2 = k1 - (j + l);
@@ -95,12 +107,40 @@ public class GenTreeAWG extends WorldGenAbstractTree {
             Block k2 = world.getBlockState(new BlockPos(i, j + l1, k)).getBlock();
             if(k2 == Blocks.AIR || k2 == Blocks.LEAVES || k2 == Blocks.LEAVES2)
             {
-                //THIS GENERATES ONLY BIRCH
-                //world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH));
-                world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState());
+                    world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState());
             }
         }
+    }
 
-        return true;
+    private void generateBirch(World world, int i, int j, int k, int l, Random random)
+    {
+        for(int k1 = (j - 3) + l; k1 <= j + l; k1++)
+        {
+            int j2 = k1 - (j + l);
+            int i3 = 1 - j2 / 2;
+            for(int k3 = i - i3; k3 <= i + i3; k3++)
+            {
+                int l3 = k3 - i;
+                for(int i4 = k - i3; i4 <= k + i3; i4++)
+                {
+                    int j4 = i4 - k;
+                    if((Math.abs(l3) != i3 || Math.abs(j4) != i3 || random.nextInt(2) != 0 && j2 != 0) && !world.getBlockState(new BlockPos(k3, k1, i4)).isOpaqueCube())
+                    {
+                        world.setBlockState(new BlockPos(k3, k1, i4), Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.BIRCH));
+                    }
+                }
+
+            }
+
+        }
+
+        for(int l1 = 0; l1 < l; l1++)
+        {
+            Block k2 = world.getBlockState(new BlockPos(i, j + l1, k)).getBlock();
+            if(k2 == Blocks.AIR || k2 == Blocks.LEAVES || k2 == Blocks.LEAVES2)
+            {
+                world.setBlockState(new BlockPos(i, j + l1, k), Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH));
+            }
+        }
     }
 }

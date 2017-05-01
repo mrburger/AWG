@@ -1,11 +1,9 @@
 package mrburgerus.awg.world.gen;
 
-import com.google.common.base.Objects;
 import mrburgerus.awg.world.gen.noisegenerator.NoiseGeneratorOctaves3DAWG;
 import net.minecraft.block.Block;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
@@ -75,11 +73,6 @@ public class TerrainGeneratorAWG
     //generate actual noise
     public void generate(int x, int z, ChunkPrimer primer)
     {
-        // Set the World Spawn to Sand, Like Alpha
-        //INCOMPLETE
-        //findSpawnPoint(primer);
-
-
         byte byte0 = 4;
         int k = byte0 + 1;
         byte b2 = 17;
@@ -141,6 +134,7 @@ public class TerrainGeneratorAWG
             }
 
         }
+
     }
 
     // makes a noise field
@@ -320,29 +314,6 @@ public class TerrainGeneratorAWG
             }
 
         }
-    }
-
-    //Find world spawn
-    //INCOMPLETE
-    public void findSpawnPoint(ChunkPrimer chunkPrimer)
-    {
-        int xVal = 0;
-        int zVal = 0;
-        while(true)
-        {
-            for (int yVal = 255; yVal > 0; yVal++) {
-                Block block = Objects.firstNonNull(chunkPrimer.getBlockState(xVal, yVal + 1, zVal), Blocks.AIR.getDefaultState()).getBlock();
-                if (block == Blocks.SAND) {
-                    world.setSpawnPoint(new BlockPos(xVal, yVal + 1, zVal));
-                    break;
-                } else {
-                    xVal++;
-                    zVal++;
-                }
-            }
-        }
-
-
     }
 }
 
